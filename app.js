@@ -17,7 +17,7 @@ const articleSchema = new mongoose.Schema({
 });
 const Article = mongoose.model("Article", articleSchema);
 
-//Chained Route Handelers Using Express
+//Chained Route Handelers Using Express ///////////// REQUEST TARGETTING ALL ARTICLES/////////////////
 app.route('/articles')
 
     .get((req, res) => {
@@ -64,6 +64,35 @@ app.route('/articles')
             }
         });
     });
+
+  //////////////////////////////////REQUEST TARGETTING A SPECIFIC ARTICLE////////////////////////////
+  app.route('/articles/:articleTitle')
+     
+    .get((req,res)=>{
+        // req.params.articleTitle = "Jack-Bauer"
+        Article.findOne({title: req.params.articleTitle},(err, foundArticles) => {
+            if (foundArticles) {
+
+                res.send(foundArticles);
+            }
+            else {
+                res.send("No article is fond");
+            }
+        });
+    })
+
+    .put((req,res) =>{
+        Article.updateOne(
+            {title: req.params.articleTitle},
+            {title:req.params.title, content: req.params.content },
+            {overwrite: true},
+            (err, foundArticles) =>  {
+                if(!err) res.send("everything is great");
+                else res.send(err)
+           
+        });
+    })
+    
 
 // GET all Article -- using get request we send all articles content in web
 app.get("/articles");
